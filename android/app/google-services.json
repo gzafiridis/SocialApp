@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "2068980352",
+    "firebase_url": "https://diplomatiki-62188.firebaseio.com",
+    "project_id": "diplomatiki-62188",
+    "storage_bucket": "diplomatiki-62188.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2068980352:android:f66f12fceb4917cfce7c65",
+        "android_client_info": {
+          "package_name": "com.example.diplomatiki"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "2068980352-srjjo5mr3c0et5b2470ifeh30nedf375.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXc1xSsVwpdsXMo5hU8n9bIBwGbtDMN-A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "2068980352-srjjo5mr3c0et5b2470ifeh30nedf375.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
