@@ -33,53 +33,92 @@ class _MyProfilePageState extends State<MyProfilePage> {
         padding: const EdgeInsets.all(8.0),
         child: ListView(
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    user.userPhoto,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Hero(
+                    tag: 'photo',
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        user.userPhoto,
+                      ),
+                      radius: 40,
+                    ),
                   ),
-                  radius: 40,
-                ),
-                Text(user.userName),
-                Text(user.userEmail),
-                Text(user.userRole),
-                Text('My Story'),
-                TextFormField(
-                    initialValue: user.userStory,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    decoration: InputDecoration(
-                        hintText: 'Write your personal story here'),
-                    onChanged: (value) {
-                      story = value.trim();
-                      setState(() {
-                        flag = true;
-                      });
-                    }),
-                RaisedButton(
-                  onPressed: !flag
-                      ? null
-                      : () async {
-                          FocusScope.of(context).unfocus();
-                          if (user.userRole == 'patient') {
-                            await FirebaseFirestore.instance
-                                .collection('patients')
-                                .doc(user.userId)
-                                .update({'story': story});
-                          } else {
-                            await FirebaseFirestore.instance
-                                .collection('doctors')
-                                .doc(user.userId)
-                                .update({'story': story});
-                          }
-                          user.setStory(story);
-                          Navigator.of(context).pop();
-                        },
-                  child: Text('Save'),
-                ),
-              ],
+                  Container(height: 30),
+                  Text(
+                    user.userName,
+                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                  ),
+                  Container(height: 7),
+                  Text(
+                    user.userEmail,
+                    style: TextStyle(
+                      fontSize: 19,
+                    ),
+                  ),
+                  Container(height: 10),
+                  if (user.userRole == 'doctor')
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Text(
+                          'Doctor',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 19,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Theme.of(context).primaryColor),
+                    ),
+                  Container(height: 25),
+                  Text(
+                    'My Story',
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                  ),
+                  TextFormField(
+                      initialValue: user.userStory,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                          hintText: 'Write your personal story here',
+                          hintStyle: TextStyle(fontSize: 17)),
+                      style: TextStyle(fontSize: 19),
+                      onChanged: (value) {
+                        story = value.trim();
+                        setState(() {
+                          flag = true;
+                        });
+                      }),
+                  if (flag) Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RaisedButton(
+                      onPressed: () async {
+                              FocusScope.of(context).unfocus();
+                              if (user.userRole == 'patient') {
+                                await FirebaseFirestore.instance
+                                    .collection('patients')
+                                    .doc(user.userId)
+                                    .update({'story': story});
+                              } else {
+                                await FirebaseFirestore.instance
+                                    .collection('doctors')
+                                    .doc(user.userId)
+                                    .update({'story': story});
+                              }
+                              user.setStory(story);
+                              Navigator.of(context).pop();
+                            },
+                      child: Text('Save'),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

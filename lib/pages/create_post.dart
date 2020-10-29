@@ -55,23 +55,21 @@ class _CreatePostState extends State<CreatePost> {
               enableSuggestions: true,
               decoration: InputDecoration(labelText: 'Title (optional)'),
             ),
-            Expanded(
-              child: TextField(
-                controller: _body,
-                maxLines: null,
-                expands: true,
-                textCapitalization: TextCapitalization.sentences,
-                autocorrect: true,
-                enableSuggestions: true,
-                decoration: InputDecoration(
-                    labelText: 'Ask or share something with others'),
-                onChanged: (value) {
-                  setState(() {
-                    _post = value;
-                  });
-                },
-              ),
+            TextField(
+              controller: _body,
+              maxLines: null,
+              textCapitalization: TextCapitalization.sentences,
+              autocorrect: true,
+              enableSuggestions: true,
+              decoration: InputDecoration(
+                  labelText: 'Ask or share something with others'),
+              onChanged: (value) {
+                setState(() {
+                  _post = value;
+                });
+              },
             ),
+            Expanded(child: Container()),
             Container(
               width: MediaQuery.of(context).size.width,
               padding: EdgeInsets.only(top: 15.0),
@@ -121,6 +119,7 @@ class _CreatePostState extends State<CreatePost> {
                                   'role': user.userRole,
                                   'photo': user.userPhoto,
                                   'likedBy': FieldValue.arrayUnion([]),
+                                  'bookmarked': FieldValue.arrayUnion([]),
                                   'comment_count': 0,
                                 });
                                 setState(() {

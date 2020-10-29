@@ -15,7 +15,7 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   bool _isLiked;
   bool _isSaved;
-  bool _isLoading;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -26,83 +26,31 @@ class _PostCardState extends State<PostCard> {
     else
       _isLiked = false;
 
-    setState(() {
-      _isLoading = true;
-    });
-    initializeSaved();
+    if (widget.post.data()['bookmarked'].contains(user.userId))
+      _isSaved = true;
+    else
+      _isSaved = false;
   }
 
-  void initializeSaved() async {
+  void _bookmark() async {
     final user = Provider.of<Auth>(context, listen: false);
-    setState(() {
-      _isLoading = true;
-    });
-    if (user.userRole == 'patient') {
-      final response = await FirebaseFirestore.instance
-          .collection('patients')
-          .doc(user.userId)
-          .collection('bookmarks')
+    if (_isSaved)
+      await FirebaseFirestore.instance
+          .collection('posts')
           .doc(widget.post.id)
-          .get();
-      if (response.data() == null)
-        _isSaved = false;
-      else
-        _isSaved = true;
-    } else {
-      final response = await FirebaseFirestore.instance
-          .collection('doctors')
-          .doc(user.userId)
-          .collection('bookmarks')
+          .update({
+        'bookmarked': FieldValue.arrayUnion([user.userId])
+      });
+    else
+      await FirebaseFirestore.instance
+          .collection('posts')
           .doc(widget.post.id)
-          .get();
-      if (response.data() == null)
-        _isSaved = false;
-      else
-        _isSaved = true;
-    }
-    setState(() {
-      _isLoading = false;
-    });
+          .update({
+        'bookmarked': FieldValue.arrayRemove([user.userId])
+      });
   }
 
-  void bookmark() async {
-    final user = Provider.of<Auth>(context, listen: false);
-    if (_isSaved) {
-      if (user.userRole == 'patient') {
-        await FirebaseFirestore.instance
-            .collection('patients')
-            .doc(user.userId)
-            .collection('bookmarks')
-            .doc(widget.post.id)
-            .set(widget.post.data());
-      } else {
-        await FirebaseFirestore.instance
-            .collection('doctors')
-            .doc(user.userId)
-            .collection('bookmarks')
-            .doc(widget.post.id)
-            .set(widget.post.data());
-      }
-    } else {
-      if (user.userRole == 'patient') {
-        await FirebaseFirestore.instance
-            .collection('patients')
-            .doc(user.userId)
-            .collection('bookmarks')
-            .doc(widget.post.id)
-            .delete();
-      } else {
-        await FirebaseFirestore.instance
-            .collection('doctors')
-            .doc(user.userId)
-            .collection('bookmarks')
-            .doc(widget.post.id)
-            .delete();
-      }
-    }
-  }
-
-  void setLike() async {
+  void _setLike() async {
     final user = Provider.of<Auth>(context, listen: false);
     if (_isLiked)
       await FirebaseFirestore.instance
@@ -131,16 +79,46 @@ class _PostCardState extends State<PostCard> {
             children: [
               widget.post.data()['role'] == 'doctor'
                   ? ListTile(
-                      leading: CircleAvatar(child: Icon(Icons.person)),
-                      title: Text('Doctor: ' + widget.post.data()['username']),
-                      subtitle: Text(dateformat),
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                          widget.post.data()['photo'],
+                        ),
+                        radius: 30,
+                      ),
+                      title: Row(
+                        children: [
+                          Text(widget.post.data()['username']),
+                          Container(width: 20,),
+                          Container(
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text('Doctor', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),),
+                            ),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Theme.of(context).primaryColor),
+                          ),
+                        ],
+                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                        child: Text(dateformat),
+                      ),
                       onTap: () => {
                         Navigator.of(context).pushNamed('/other_profile',
-                            arguments: [widget.post.data()['userId'], 'doctors'])
+                            arguments: [
+                              widget.post.data()['userId'],
+                              'doctors'
+                            ])
                       },
                     )
                   : ListTile(
-                      leading: CircleAvatar(child: Icon(Icons.person)),
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                          widget.post.data()['photo'],
+                        ),
+                        radius: 30,
+                      ),
                       title: Text(widget.post.data()['username']),
                       subtitle: Text(dateformat),
                       onTap: () => {
@@ -154,9 +132,14 @@ class _PostCardState extends State<PostCard> {
               if (widget.post.data()['title'] != '')
                 Text(
                   widget.post.data()['title'],
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
-              Text(
-                widget.post.data()['main_text'],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  widget.post.data()['main_text'],
+                  style: TextStyle(fontSize: 17),
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -169,7 +152,7 @@ class _PostCardState extends State<PostCard> {
                           setState(() {
                             _isLiked = !_isLiked;
                           });
-                          setLike();
+                          _setLike();
                         },
                         icon: Icon(
                           Icons.thumb_up,
@@ -196,7 +179,7 @@ class _PostCardState extends State<PostCard> {
                           color: Theme.of(context).primaryColor,
                         ),
                         label: Text(
-                          'Comment',
+                          'Comments',
                           style: TextStyle(color: Colors.black),
                         ),
                       ),
@@ -207,7 +190,7 @@ class _PostCardState extends State<PostCard> {
                       setState(() {
                         _isSaved = !_isSaved;
                       });
-                      bookmark();
+                      _bookmark();
                     },
                     icon: _isSaved
                         ? Icon(

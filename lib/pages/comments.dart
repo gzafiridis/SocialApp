@@ -66,7 +66,6 @@ class _CommentPageState extends State<CommentPage> {
                     .collection('comments')
                     .orderBy(
                       'createdAt',
-                      descending: true,
                     )
                     .snapshots(),
                 builder: (ctx, AsyncSnapshot<QuerySnapshot> commentSnapshot) {

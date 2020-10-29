@@ -57,16 +57,55 @@ class _OtherProfileState extends State<OtherProfile> {
                         ),
                         radius: 40,
                       ),
-                      Text(user.data()['username']),
-                      Text(user.data()['email']),
-                      Text(user.data()['role']),
-                      Text('My Story'),
-                      Text(user.data()['story']),
+                      Container(height: 30),
+                      Text(
+                        user.data()['username'],
+                        style: TextStyle(
+                            fontSize: 19, fontWeight: FontWeight.bold),
+                      ),
+                      Container(height: 7),
+                      Text(
+                        user.data()['email'],
+                        style: TextStyle(
+                          fontSize: 19,
+                        ),
+                      ),
+                      Container(height: 10),
+                      if (user.data()['role'] == 'doctor')
+                        Container(
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Text(
+                              'Doctor',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Theme.of(context).primaryColor),
+                        ),
+                      Text(
+                        'My Story',
+                        style: TextStyle(
+                            fontSize: 21, fontWeight: FontWeight.bold),
+                      ),
+                      Container(height: 10),
+                      Text(
+                        user.data()['story'],
+                        style: TextStyle(fontSize: 19),
+                      ),
+                      Container(height: 25,),
                       FlatButton(
                         onPressed: () => Navigator.of(context).pushNamed(
                             '/chat',
                             arguments: [user.id, user.data()['role']]),
-                        child: Text('Send a message'),
+                        child: Text(
+                          'Send a message',
+                          style: TextStyle(fontSize: 18),
+                        ),
                       ),
                     ],
                   ),

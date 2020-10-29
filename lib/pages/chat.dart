@@ -16,10 +16,25 @@ class _ChatPageState extends State<ChatPage> {
   var _enteredMessage = '';
   var id;
   var user;
+  var otherUser;
+  var otherPhoto;
+  var otherUsername;
+  var otherRole;
   var _isInit = true;
   var myTag;
   var otherTag;
   var args;
+  var _isLoading = true;
+
+  Future<DocumentSnapshot> _getUser() async {
+    var user;
+    await FirebaseFirestore.instance
+        .collection(otherTag)
+        .doc(id)
+        .get()
+        .then((value) => user = value);
+    return user;
+  }
 
   @override
   void didChangeDependencies() {
@@ -31,6 +46,16 @@ class _ChatPageState extends State<ChatPage> {
         otherTag = 'patients';
       else
         otherTag = 'doctors';
+      _getUser().then((value) {
+        otherUser = value;
+        otherPhoto = otherUser.data()['photo'];
+        otherUsername = otherUser.data()['username'];
+        otherRole = otherUser.data()['role'];
+        setState(() {
+          _isLoading = false;
+        }); 
+      });
+
       user = Provider.of<Auth>(context, listen: false);
       if (user.userRole == 'patient')
         myTag = 'patients';
@@ -42,7 +67,7 @@ class _ChatPageState extends State<ChatPage> {
 
   void _sendMessage() async {
     FocusScope.of(context).unfocus();
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection(myTag)
         .doc(user.userId)
         .collection('chats')
@@ -56,6 +81,16 @@ class _ChatPageState extends State<ChatPage> {
       'photo': user.userPhoto
     });
     FirebaseFirestore.instance
+        .collection(myTag)
+        .doc(user.userId)
+        .collection('chats')
+        .doc(id)
+        .set({
+      'photo': otherPhoto,
+      'username': otherUsername,
+      'role': otherRole
+    });
+    await FirebaseFirestore.instance
         .collection(otherTag)
         .doc(id)
         .collection('chats')
@@ -68,6 +103,16 @@ class _ChatPageState extends State<ChatPage> {
       'username': user.userName,
       'photo': user.userPhoto
     });
+    FirebaseFirestore.instance
+        .collection(otherTag)
+        .doc(id)
+        .collection('chats')
+        .doc(user.userId)
+        .set({
+      'photo': user.userPhoto,
+      'username': user.userName,
+      'role': user.userRole
+    });
     _controller.clear();
   }
 
@@ -75,7 +120,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Chat')),
-      body: Container(
+      body: _isLoading ? Center(child: CircularProgressIndicator()) : Container(
           child: Column(
         children: [
           Expanded(child: Messages(tag: myTag, user: user, id: id)),

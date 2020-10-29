@@ -10,7 +10,6 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  static const routeName = '/auth';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   AuthMode _authMode = AuthMode.Login;
   Map<String, String> _authData = {
@@ -50,10 +49,9 @@ class _AuthPageState extends State<AuthPage> {
     } catch (error) {
       print(error);
       setState(() {
-      _isLoading = false;
-    });
-      String errorMessage =
-          'There was an error:\n' + error.toString();
+        _isLoading = false;
+      });
+      String errorMessage = 'There was an error:\n' + error.toString();
       _showErrorDialog(errorMessage);
     }
 
@@ -174,34 +172,20 @@ class _AuthPageState extends State<AuthPage> {
                             : null,
                       ),
                     if (_authMode == AuthMode.Signup)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Radio(
-                            value: 'patient',
-                            groupValue: _role,
-                            onChanged: (value) {
-                              setState(() {
-                                _role = value;
-                              });
-                            },
-                          ),
-                          Expanded(
-                            child: Text('I am a patient'),
-                          ),
-                          Radio(
-                            value: 'doctor',
-                            groupValue: _role,
-                            onChanged: (value) {
-                              setState(() {
-                                _role = value;
-                              });
-                            },
-                          ),
-                          Expanded(
-                            child: Text('I am a doctor'),
-                          ),
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+                        child: CheckboxListTile(
+                          title: Text('I am a doctor'),
+                          value: _role == 'doctor',
+                          onChanged: (bool value) {
+                            setState(() {
+                              if (value)
+                                _role = 'doctor';
+                              else
+                                _role = 'patient';
+                            });
+                          },
+                        ),
                       ),
                     Padding(
                       padding: EdgeInsets.symmetric(
