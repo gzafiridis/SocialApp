@@ -88,7 +88,7 @@ class _PostCardState extends State<PostCard> {
                       title: Row(
                         children: [
                           Text(widget.post.data()['username']),
-                          Container(width: 20,),
+                          Container(width: 10,),
                           Container(
                             child: Padding(
                               padding: const EdgeInsets.all(5.0),

@@ -91,24 +91,52 @@ class _CommentPageState extends State<CommentPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                comment.data()['role'] == 'doctor'
-                                    ? ListTile(
-                                        leading: CircleAvatar(
-                                            child: Icon(Icons.person)),
-                                        title: Text('Doctor: ' +
-                                            comment.data()['username']),
-                                        subtitle: Text(dateformat),
-                                      )
-                                    : ListTile(
-                                        leading: CircleAvatar(
-                                            child: Icon(Icons.person)),
-                                        title: Text(comment.data()['username']),
-                                        subtitle: Text(dateformat),
+                                ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                      comment.data()['photo'],
+                                    ),
+                                    radius: 20,
+                                  ),
+                                  title: Row(
+                                    children: [
+                                      Text(comment.data()['username']),
+                                      Container(
+                                        width: 10,
                                       ),
+                                      if (comment.data()['role'] == 'doctor')
+                                        Container(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(5.0),
+                                            child: Text(
+                                              'Doctor',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                        ),
+                                    ],
+                                  ),
+                                  subtitle: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                    child: Text(dateformat),
+                                  ),
+                                ),
                                 Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(50.0, 0, 10, 0),
-                                  child: Text(comment.data()['text']),
+                                  child: Text(
+                                    comment.data()['text'],
+                                    style: TextStyle(fontSize: 15),
+                                  ),
                                 ),
                               ],
                             ),
@@ -185,6 +213,7 @@ class _CommentPageState extends State<CommentPage> {
                                     'userId': user.userId,
                                     'username': user.userName,
                                     'role': user.userRole,
+                                    'photo': user.userPhoto,
                                   });
                                   await FirebaseFirestore.instance
                                       .collection('posts')

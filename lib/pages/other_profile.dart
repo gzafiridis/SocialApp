@@ -87,6 +87,7 @@ class _OtherProfileState extends State<OtherProfile> {
                               borderRadius: BorderRadius.circular(5),
                               color: Theme.of(context).primaryColor),
                         ),
+                      Container(height: 25),
                       Text(
                         'My Story',
                         style: TextStyle(
@@ -97,7 +98,9 @@ class _OtherProfileState extends State<OtherProfile> {
                         user.data()['story'],
                         style: TextStyle(fontSize: 19),
                       ),
-                      Container(height: 25,),
+                      Container(
+                        height: 25,
+                      ),
                       FlatButton(
                         onPressed: () => Navigator.of(context).pushNamed(
                             '/chat',

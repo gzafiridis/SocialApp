@@ -48,7 +48,32 @@ class AllChats extends StatelessWidget {
                     radius: 20,
                   ),
                   trailing: Icon(Icons.navigate_next),
-                  title: Center(child: Text(chatsDocs[index].data()['username'], style: TextStyle(fontSize: 18),)),
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        chatsDocs[index].data()['username'],
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      Container(width: 6),
+                      if (chatsDocs[index].data()['role'] == 'doctor')
+                        Container(
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Text(
+                              'Doctor',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Theme.of(context).primaryColor),
+                        ),
+                    ],
+                  ),
                   onTap: () => Navigator.of(context).pushNamed('/chat',
                       arguments: [
                         chatsDocs[index].id,
