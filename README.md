@@ -1,6 +1,6 @@
 # SocialApp
 
-A basic social networking app, targeted towards people with hearing loss, built with Flutter and Firebase for my thesis. 
+A basic social networking app, targeted towards people dealing with hearing loss, built with Flutter and Firebase for my thesis. 
 
 ## Screenshots
 Login | Sign Up
